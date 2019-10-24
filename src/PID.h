@@ -31,6 +31,8 @@ class PID {
    */
   double TotalError();
 
+  double nextAngle(double prevAngle, double speed);
+
  private:
   /**
    * PID Errors

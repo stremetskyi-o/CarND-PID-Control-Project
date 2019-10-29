@@ -56,17 +56,23 @@ int main() {
           double cte = std::stod(j[1]["cte"].get<string>());
           double speed = std::stod(j[1]["speed"].get<string>());
           double angle = std::stod(j[1]["steering_angle"].get<string>());
-          pid.UpdateError(cte);
-          double steer_value = pid.nextAngle(angle, speed);
-          
-          // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
-                    << std::endl;
+          string msg;
+          if (abs(cte) > 3.5) {
+            pid.reset();
+            msg = "42[\"reset\"]";
+          } else {
+            pid.UpdateError(cte);
+            double steer_value = pid.nextAngle(angle, speed);
+            
+            // DEBUG
+            std::cout << "CTE: " << cte << " Steering Value: " << steer_value
+                      << std::endl;
 
-          json msgJson;
-          msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = 0.3 * exp(-fabs(steer_value));
-          auto msg = "42[\"steer\"," + msgJson.dump() + "]";
+            json msgJson;
+            msgJson["steering_angle"] = steer_value;
+            msgJson["throttle"] = 0.3 * exp(-fabs(steer_value));
+            msg = "42[\"steer\"," + msgJson.dump() + "]";
+          }
           std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if

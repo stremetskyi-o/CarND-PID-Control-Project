@@ -33,6 +33,8 @@ class PID {
 
   double nextAngle(double prevAngle, double speed);
 
+  void reset();
+
  private:
   /**
    * PID Errors

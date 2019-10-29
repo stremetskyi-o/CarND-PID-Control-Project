@@ -28,3 +28,9 @@ double PID::nextAngle(double prevAngle, double speed) {
   angle *= exp(-(1 - speed / 100));
   return (angle < -1) ? -1 : (1 < angle) ? 1 : angle;
 }
+
+void PID::reset() {
+  d_error = 0;
+  p_error = 0;
+  i_error = 0;
+}

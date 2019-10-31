@@ -1,6 +1,11 @@
 #ifndef PID_H
 #define PID_H
 
+#include <limits>
+#include <vector>
+
+using std::vector;
+
 class PID {
  public:
   /**
@@ -49,6 +54,15 @@ class PID {
   double Kp;
   double Ki;
   double Kd;
+
+  /**
+   * Twiddle params
+   */
+  const bool twiddleEnabled = true;
+  const vector<double> twiddleCoeff = {0, 0, 0};
+  bool twiddlePositive = true;
+  double twiddleError = std::numeric_limits<double>::max();
+  int twiddleStep = 0;
 };
 
 #endif  // PID_H

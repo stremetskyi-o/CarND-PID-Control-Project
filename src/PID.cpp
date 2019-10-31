@@ -16,6 +16,9 @@ void PID::UpdateError(double cte) {
   d_error = d_error == 0 ? cte : cte - d_error;
   p_error = cte;
   i_error = TotalError();
+  if (twiddleEnabled) {
+    twiddleStep += 1;
+  }
 }
 
 double PID::TotalError() {
@@ -30,7 +33,11 @@ double PID::nextAngle(double prevAngle, double speed) {
 }
 
 void PID::reset() {
-  d_error = 0;
-  p_error = 0;
-  i_error = 0;
+  if (twiddleEnabled) {
+    
+  } else {
+   d_error = 0;
+   p_error = 0;
+   i_error = 0;
+  }
 }

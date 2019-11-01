@@ -1,7 +1,39 @@
-# CarND-Controls-PID
-Self-Driving Car Engineer Nanodegree Program
+# **CarND-Controls-PID-Project**
+## Project Writeup
 
----
+### 1. Writeup
+
+This writeup describes implementation steps that were taken to address project rubric points.
+
+### 2. Implementation
+I've started the project by doing implementation for PID class: 
+* `Init` function for setting hyperparameters
+* `UpdateError` and `TotalError` functions for setting new proportional error and calculating derivative and integral errors
+
+While tuning initial parameters, it was clear that the speed of the car has a considerable effect on the final trajectory, so I've introduced two weights. The first weight changed the next acceleration based on the next angle and the second one steering angle based on the previous speed. These weights had a stabilizing effect on the speed and final path.
+
+The angle weight was calculated with: *W<sub>α</sub> = e<sup>-V / V<sub>max</sub></sup>*
+
+The acceleration was calculated with: *a = 0.3 ⋅ e<sup>-|α|</sup>*
+
+### 3. Hyperparameter tuning
+After some initial testing, I decided to use twiddle to find parameters that minimize the error, it worked good at the start, and I was able to get some useful insight. Still, in the end, it wasn't possible to take advantage of it as some parameter combinations are causing the vehicle to oscillate on very high frequency such that the vehicle is not possible to progress forward. Unfortunately, there is no available information about the vehicle position to incorporate it as part of the error.
+Then I switched to tuning parameters manually. I have started with a good coefficient for the proportional part and then started adding some weight to the derivative part. After several steps of adjustments of both parameters, I was satisfied and then have chosen the coefficient for the integral part in such a way that it doesn't influence the trajectory much.
+
+### 3. Results
+The vehicle can drive around the track with some oscillating, which is kept at a minimum while speed is constant and the road is straight.
+
+### 4. Discussion
+The PID in controller name stands for:
+* proportional - this part influences how aggressive reaction would be on cross-track error, for bigger values controller tend to overshoot, for smaller it can take to much time to get on the line
+* integral - this part tries to cancel the accumulated error which can be caused by the position drift, small values might no be able to cancel the effect, bigger values can be too sensitive to local accumulated error instead of total
+* derivative - this part helps to minimize the overshooting that causes the vehicle to oscillate, by decreasing signal strength after the error was decreased successfully in the previous step
+
+A good representation of how P, PD, and PID controllers solve the same problem is seen on the plot from the course plot:
+
+![plot](.img/plot.png)
+
+Some nonidealities are present in the PID controller implementation, as I have found it challenging to set up it to incorporate changes in speed. Also, the decisions made suffer from a lack of path prediction; some path planning input would be beneficial here.
 
 ## Dependencies
 
@@ -37,62 +69,5 @@ Fellow students have put together a guide to Windows set-up for the project [her
 
 Tips for setting up your environment can be found [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
 
-## Editor Settings
-
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
-
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
-
-## Code Style
-
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
-
-## Project Instructions and Rubric
-
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
-
-More information is only accessible by people who are already enrolled in Term 2
-of CarND. If you are enrolled, see [the project page](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/f1820894-8322-4bb3-81aa-b26b3c6dcbaf/lessons/e8235395-22dd-4b87-88e0-d108c5e5bbf4/concepts/6a4d8d42-6a04-4aa6-b284-1697c0fd6562)
-for instructions and the project rubric.
-
-## Hints!
-
-* You don't have to follow this directory structure, but if you do, your work
-  will span all of the .cpp files here. Keep an eye out for TODOs.
-
-## Call for IDE Profiles Pull Requests
-
-Help your fellow students!
-
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to we ensure
-that students don't feel pressured to use one IDE or another.
-
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
-
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
-
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
-
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
-
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
-
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
-
+## Original ReadMe
+Original ReadMe is available [here](README-Udacity.md)

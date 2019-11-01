@@ -40,6 +40,10 @@ class PID {
 
   void reset();
 
+  int getTwiddleN() {
+    return twiddleN;
+  }
+
  private:
   /**
    * PID Errors
@@ -51,18 +55,18 @@ class PID {
   /**
    * PID Coefficients
    */ 
-  double Kp;
-  double Ki;
-  double Kd;
+  vector<double> k;
 
   /**
    * Twiddle params
    */
-  const bool twiddleEnabled = true;
-  const vector<double> twiddleCoeff = {0, 0, 0};
+  const bool twiddleEnabled = false;
+  vector<double> twiddleCoeff = {0.5, 0.5, 0.5};
   bool twiddlePositive = true;
-  double twiddleError = std::numeric_limits<double>::max();
-  int twiddleStep = 0;
+  double bestTwiddleError = std::numeric_limits<double>::max();
+  double twiddleError = 0;
+  int twiddleN = 0;
+  int twiddleI = 0;
 };
 
 #endif  // PID_H

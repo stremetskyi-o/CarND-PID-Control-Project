@@ -36,7 +36,7 @@ int main() {
   uWS::Hub h;
 
   PID pid;
-  pid.Init(0.075, 0.0, 0.0);
+  pid.Init(0.75, 0.0, 0.0);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -57,7 +57,7 @@ int main() {
           double speed = std::stod(j[1]["speed"].get<string>());
           double angle = std::stod(j[1]["steering_angle"].get<string>());
           string msg;
-          if (abs(cte) > 3.5) {
+          if (abs(cte) > 3.5 || pid.getTwiddleN() > 1000) {
             pid.reset();
             msg = "42[\"reset\"]";
           } else {
@@ -65,15 +65,15 @@ int main() {
             double steer_value = pid.nextAngle(angle, speed);
             
             // DEBUG
-            std::cout << "CTE: " << cte << " Steering Value: " << steer_value
-                      << std::endl;
+            //std::cout << "CTE: " << cte << " Steering Value: " << steer_value
+            //          << std::endl;
 
             json msgJson;
             msgJson["steering_angle"] = steer_value;
             msgJson["throttle"] = 0.3 * exp(-fabs(steer_value));
             msg = "42[\"steer\"," + msgJson.dump() + "]";
           }
-          std::cout << msg << std::endl;
+          //std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if
       } else {

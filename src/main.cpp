@@ -36,7 +36,7 @@ int main() {
   uWS::Hub h;
 
   PID pid;
-  pid.Init(0.6, 0.001, 0.7);
+  pid.Init(0.2, 0.0002, 0.8);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -70,7 +70,7 @@ int main() {
 
             json msgJson;
             double throttle = 0;
-            if (speed < 22) {
+            if (speed < 30) {
               throttle = 0.3 * exp(-fabs(steer_value));
             }
             msgJson["steering_angle"] = steer_value;

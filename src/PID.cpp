@@ -24,8 +24,6 @@ double PID::TotalError() {
 
 double PID::nextAngle(double prevAngle, double speed) {
   double angle = - Kp * p_error - Kd * d_error - Ki * i_error;
-  std::cout << angle << std::endl;
-  angle *= exp(-(speed / 100));
   return (angle < -1) ? -1 : (1 < angle) ? 1 : angle;
 }
 

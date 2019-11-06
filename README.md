@@ -10,18 +10,14 @@ I've started the project by doing implementation for PID class:
 * `Init` function for setting hyperparameters
 * `UpdateError` and `TotalError` functions for setting new proportional error and calculating derivative and integral errors
 
-While tuning initial parameters, it was clear that the speed of the car has a considerable effect on the final trajectory, so I've introduced two weights. The first weight changed the next acceleration based on the next angle and the second one steering angle based on the previous speed. These weights had a stabilizing effect on the speed and final path.
-
-The angle weight was calculated with: *W<sub>α</sub> = e<sup>-V / V<sub>max</sub></sup>*
-
-The acceleration was calculated with: *a = 0.3 ⋅ e<sup>-|α|</sup>*
+While tuning initial parameters, it was clear that the speed of the car has a considerable effect on the final trajectory, so I've limited it to 30 mph and introduced acceleration weight: *W<sub>a</sub> = 0.3 ⋅ e<sup>-|α|</sup>*
 
 ### 3. Hyperparameter tuning
 After some initial testing, I decided to use twiddle to find parameters that minimize the error, it worked good at the start, and I was able to get some useful insight. Still, in the end, it wasn't possible to take advantage of it as some parameter combinations are causing the vehicle to oscillate on very high frequency such that the vehicle is not possible to progress forward. Unfortunately, there is no available information about the vehicle position to incorporate it as part of the error.
-Then I switched to tuning parameters manually. I have started with a good coefficient for the proportional part and then started adding some weight to the derivative part. After several steps of adjustments of both parameters, I was satisfied and then have chosen the coefficient for the integral part in such a way that it doesn't influence the trajectory much.
+Then I switched to tuning parameters manually. I have started with defining a good proportional coefficient. I have taken into account that angle range is [-1, 1] and the max absolute CTE where car doesn't leave the road is around 3.5. Then I've calculated the coefficient so near the edge of the road it gives 2/3 of the max angle - C<sub>p</sub> = 0.66 / 3.2 ≈ 0.2. After this I've added diferential coefficient of 0.5 and started tuning it up and down based on the test lap results. After several steps of adjustments, I was satisfied and then have chosen the coefficient for the integral part in such a way that it doesn't influence the trajectory much.
 
 ### 3. Results
-The vehicle can drive around the track with some oscillating, which is kept at a minimum while speed is constant and the road is straight.
+The vehicle can drive around the track passing some parts without oscillating at all and some with moderate magnitude oscillating.
 
 ### 4. Discussion
 The PID in controller name stands for:
